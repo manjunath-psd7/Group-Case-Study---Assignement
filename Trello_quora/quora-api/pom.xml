@@ -36,11 +36,11 @@
             <version>2.6.1</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.upgrad.quora</groupId>
             <artifactId>quora-service</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -145,8 +145,6 @@
                             <language>spring</language>
                         </configuration>
                     </execution>
-
-
                 </executions>
             </plugin>
         </plugins>
