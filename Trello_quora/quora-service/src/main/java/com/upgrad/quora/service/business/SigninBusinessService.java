@@ -4,11 +4,13 @@ import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
+import com.upgrad.quora.service.exception.SignOutRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Service
 public class SigninBusinessService {
@@ -20,6 +22,7 @@ public class SigninBusinessService {
     private PasswordCryptographyProvider cryptographyProvider;
 
 
+    //Method to authenticate the user
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
         UserEntity userEntity = userDao.getUserByName(username);
@@ -32,6 +35,7 @@ public class SigninBusinessService {
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
             UserAuthTokenEntity userAuthToken = new UserAuthTokenEntity();
             userAuthToken.setUser(userEntity);
+            userAuthToken.setUuid(UUID.randomUUID().toString());
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);
             userAuthToken.setAccessToken(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
@@ -44,6 +48,21 @@ public class SigninBusinessService {
         } else {
             throw new AuthenticationFailedException("ATH-002", "Password Failed");
         }
+    }
 
+    //Method to signout the user
+    @Transactional(propagation = Propagation.REQUIRED)
+    public UserAuthTokenEntity singOutUser(final String accessToken) throws SignOutRestrictedException
+    {
+        UserAuthTokenEntity userAuthToken = userDao.getUserAuthToken(accessToken);
+        if(userAuthToken == null)
+        {
+            throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
+        }
+        else
+        {
+            UserAuthTokenEntity userAuthTokenEntity = userDao.updateSingOut(ZonedDateTime.now(),accessToken);
+            return userAuthTokenEntity;
+        }
     }
 }
