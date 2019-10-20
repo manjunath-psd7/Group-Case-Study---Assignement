@@ -13,7 +13,9 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "user_auth", schema = "public")
 @NamedQueries({
-        @NamedQuery(name = "userAuthTokenByAccessToken" , query = "select ut from UserAuthTokenEntity ut where ut.accessToken = :accessToken ")
+        @NamedQuery(name = "userAuthTokenByAccessToken" , query = "select ut from UserAuthTokenEntity ut where ut.accessToken = :accessToken "),
+        @NamedQuery(name = "userSignedOut" , query = "select ut from UserAuthTokenEntity ut where (ut.logoutAt is NOT NULL) AND ut.user = :user"),
+        @NamedQuery(name = "userSignedIn" , query = "select ut from UserAuthTokenEntity ut where (ut.logoutAt is NULL) AND ut.user = :user ORDER BY logoutAt DESC")
 })
 
 

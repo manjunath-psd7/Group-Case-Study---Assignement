@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Table(name = "users", schema = "public")
 @NamedQueries(
         {
+                @NamedQuery(name = "userByUserId", query = "select u from UserEntity u where u.uuid =:uuid"),
                 @NamedQuery(name = "userByUsername", query = "select u from UserEntity u where u.username =:username"),
                 @NamedQuery(name = "userByEmail", query = "select u from UserEntity u where u.email =:email")
         })
@@ -30,22 +31,22 @@ public class UserEntity implements Serializable {
 
     @Column(name = "firstname")
     @NotNull
-    @Size(max = 200)
+    @Size(max = 30)
     private String firstName;
 
     @Column(name = "lastname")
     @NotNull
-    @Size(max = 200)
+    @Size(max = 30)
     private String lastName;
 
     @Column(name = "username")
     @NotNull
-    @Size(max = 200)
+    @Size(max = 30)
     private String username;
 
     @Column(name = "email")
     @NotNull
-    @Size(max = 200)
+    @Size(max = 50)
     private String email;
 
     //@ToStringExclude
@@ -60,27 +61,27 @@ public class UserEntity implements Serializable {
 
     @Column(name = "country")
     @NotNull
-    @Size(max = 200)
+    @Size(max = 30)
     private String country;
 
     @Column(name = "aboutme")
     @NotNull
-    @Size(max = 200)
+    @Size(max = 50)
     private String aboutme;
 
     @Column(name = "role")
     @NotNull
-    @Size(max = 200)
+    @Size(max = 30)
     private String role;
 
     @Column(name = "dob")
     @NotNull
-    @Size(max = 200)
+    @Size(max = 30)
     private String dob;
 
     @Column(name = "contactnumber")
     @NotNull
-    @Size(max = 200)
+    @Size(max = 30)
     private String contactnumber;
 
     public Integer getId() {
