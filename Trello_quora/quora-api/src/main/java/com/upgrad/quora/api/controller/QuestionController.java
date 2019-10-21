@@ -28,6 +28,7 @@ public class QuestionController {
     @Autowired
     UserDao userDao;
 
+    //Endpoint for creating question
     @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity createQuestion(final QuestionRequest questionRequest, @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException {
         final QuestionEntity questionEntity = new QuestionEntity();
@@ -40,6 +41,7 @@ public class QuestionController {
         return new ResponseEntity<QuestionResponse>(question, HttpStatus.CREATED);
     }
 
+    //Endpoint for extracting all questions
     @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public  ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException {
 
@@ -54,6 +56,7 @@ public class QuestionController {
 
     }
 
+    //Endpoint for all questions by userid
     @RequestMapping(method = RequestMethod.GET, path = "/question/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getQuestionbyUserId(@PathVariable("userId") final String userId,
                                                                        @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
@@ -66,7 +69,7 @@ public class QuestionController {
         }
         return new ResponseEntity<List<QuestionDetailsResponse>>(questionResponse, HttpStatus.OK);
     }
-
+    //Endpoint for editing the questionid
     @RequestMapping(method = RequestMethod.PUT, path="/question/edit/{questionId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionEditResponse> editQuestion(@PathVariable("questionId") final String questionId, QuestionEditRequest questionEditRequest,
                                                             @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
@@ -79,7 +82,7 @@ public class QuestionController {
         QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(updatedQuestionEntity.getUuid()).status("QUESTION EDITED");
         return new ResponseEntity<QuestionEditResponse>(questionEditResponse, HttpStatus.OK);
     }
-
+    //Method for deleting the  question
     @RequestMapping(method = RequestMethod.DELETE, path="/question/delete/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionDeleteResponse> deleteQuestion(@PathVariable("questionId") final String questionId,
                                                              @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException, InvalidQuestionException {

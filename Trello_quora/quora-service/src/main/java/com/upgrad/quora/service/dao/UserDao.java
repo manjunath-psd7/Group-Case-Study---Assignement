@@ -15,12 +15,14 @@ public class UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    //Method to createUser
     public UserEntity createUser(UserEntity userEntity)
     {
         entityManager.persist(userEntity);
         return userEntity;
     }
 
+    //Method to get user by name
     public UserEntity getUserByName(final String userName) {
         try {
             return entityManager.createNamedQuery("userByUsername", UserEntity.class).setParameter("username",userName).getSingleResult();
@@ -31,6 +33,7 @@ public class UserDao {
         }
     }
 
+    //Method to get User by user Id
     public UserEntity getUserByUserId(final String uuid) {
         try {
             return entityManager.createNamedQuery("userByUserId", UserEntity.class).setParameter("uuid",uuid).getSingleResult();
@@ -41,6 +44,7 @@ public class UserDao {
         }
     }
 
+    //Method to get user by Email
     public UserEntity getUserByEmail(final String email){
         try {
             return entityManager.createNamedQuery("userByEmail", UserEntity.class).setParameter("email", email).getSingleResult();
@@ -51,15 +55,18 @@ public class UserDao {
         }
     }
 
+    //Method to create Auth Token
     public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
         entityManager.persist(userAuthTokenEntity);
         return userAuthTokenEntity;
     }
 
+    //Method to update user details
     public void updateUser(final UserEntity updatedUserEntity) {
         entityManager.merge(updatedUserEntity);
     }
 
+    //Method to get User Auth token
     public UserAuthTokenEntity getUserAuthToken(final String accessToken)
     {
         try
@@ -72,6 +79,7 @@ public class UserDao {
         }
     }
 
+    //Method to validate whether user has signed out or not
     public UserAuthTokenEntity getUserHasSignedOut(final UserEntity user)
     {
         try
@@ -84,6 +92,7 @@ public class UserDao {
         }
     }
 
+    //Method to validate whether user has signed in
     public  UserAuthTokenEntity getUserHasSignedIn(final UserEntity user)
     {
         try
@@ -96,6 +105,7 @@ public class UserDao {
         }
     }
 
+    //Method to signout
     public UserAuthTokenEntity updateSingOut(final ZonedDateTime logOutTime, final String accessToken)
     {
         try
@@ -113,6 +123,7 @@ public class UserDao {
         }
     }
 
+    //Method to delete the user
     public UserEntity deleteUser(final String uuid)
     {
         try

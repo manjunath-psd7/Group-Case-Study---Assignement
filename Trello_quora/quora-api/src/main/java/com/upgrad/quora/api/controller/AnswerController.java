@@ -24,6 +24,7 @@ public class AnswerController {
     @Autowired
     AnswerService answerService;
 
+    //Endpoint for creating the answer for a question
     @RequestMapping(method = RequestMethod.POST, path = "/answer/{questionId}/answer/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerResponse> createAnswer(@PathVariable("questionId") final String questionId, final AnswerRequest answerRequest, @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
         final AnswerEntity answerEntity = new AnswerEntity();
@@ -36,6 +37,7 @@ public class AnswerController {
         return new ResponseEntity<AnswerResponse>(answerResponse, HttpStatus.CREATED);
     }
 
+    //Endpoint for editing the answer
     @RequestMapping(method = RequestMethod.PUT, path = "/answer/edit/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerEditResponse> updateAnswer(@PathVariable("answerId") final String answerId, final AnswerEditRequest answerEditRequest, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException
     {
@@ -48,6 +50,7 @@ public class AnswerController {
         return new ResponseEntity<AnswerEditResponse>(answerEditResponse, HttpStatus.OK);
     }
 
+    //Endpoint for deleting the answer
     @RequestMapping(method = RequestMethod.DELETE, path = "/answer/delete/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerDeleteResponse> deleteAnswer(@PathVariable("answerId") final String answerId, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, AnswerNotFoundException {
 
@@ -56,6 +59,7 @@ public class AnswerController {
         return new ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
     }
 
+    //Endpoint for getting all answers to a question
     @RequestMapping(method = RequestMethod.GET, path = "/answer/all/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<AnswerDetailsResponse>> getAllAnswersToQuestion(@PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
         final List<AnswerEntity> answerDetailsResponses = answerService.getAllAnswersByQuestionId(questionId,accessToken);

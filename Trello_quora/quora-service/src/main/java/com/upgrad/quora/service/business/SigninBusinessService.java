@@ -22,7 +22,7 @@ public class SigninBusinessService {
     private PasswordCryptographyProvider cryptographyProvider;
 
 
-    //Method to authenticate the user
+    //Method to authenticate the authenticate user by accepting user details
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
         UserEntity userEntity = userDao.getUserByName(username);
@@ -50,7 +50,7 @@ public class SigninBusinessService {
         }
     }
 
-    //Method to signout the user
+    //Method to signout the user who has logged in
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity singOutUser(final String accessToken) throws SignOutRestrictedException
     {

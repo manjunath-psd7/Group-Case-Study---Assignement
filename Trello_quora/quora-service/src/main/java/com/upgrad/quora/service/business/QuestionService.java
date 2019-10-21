@@ -23,6 +23,7 @@ public class QuestionService {
     @Autowired
     private UserDao userDao;
 
+    //This method is used to create new question
     @Transactional(propagation = Propagation.REQUIRED)
     public QuestionEntity createQuestion(final QuestionEntity questionEntity, final String accessToken) throws AuthorizationFailedException
     {
@@ -42,6 +43,7 @@ public class QuestionService {
         }
     }
 
+    //This method is used to extract all the questions
     public List<QuestionEntity> getAllQuestions(final String authorizationToken) throws AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
         if(userAuthTokenEntity == null)
@@ -58,6 +60,7 @@ public class QuestionService {
         }
     }
 
+    //This method is used to extract the questions based on UserId
     public List<QuestionEntity> getQuestionsByUserUUID(String user_uuid, final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
         if(userAuthTokenEntity == null)
@@ -77,11 +80,18 @@ public class QuestionService {
             }
             else
             {
-                    return questionDao.getQuestionsByUserUUId(userEntity);
+                List<QuestionEntity> questionEntityList = questionDao.getQuestionsByUserUUId(userEntity);
+                if(questionEntityList.isEmpty())
+                {
+                    throw new UserNotFoundException("USR-001","User with entered uuid whose question details are to be seen does not exist");
+                }
+                else
+                    return questionEntityList;
             }
         }
     }
 
+    //This method is used to edit the content of the question
     @Transactional(propagation = Propagation.REQUIRED)
     public QuestionEntity editQuestionContent(final QuestionEntity questionEditedEntity,final String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
@@ -111,6 +121,7 @@ public class QuestionService {
         }
     }
 
+    //This method is used to delete the question
     @Transactional(propagation = Propagation.REQUIRED)
     public QuestionEntity deleteQuestion(String uuid, final String authorizationToken) throws AuthorizationFailedException, InvalidQuestionException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);

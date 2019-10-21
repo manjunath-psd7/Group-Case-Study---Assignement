@@ -28,6 +28,7 @@ public class AnswerService {
     @Autowired
     private QuestionDao questionDao;
 
+    // This method is used to create answer for the question
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity createAnswer(final AnswerEntity answerEntity, final String accessToken, final String questionId) throws AuthorizationFailedException, InvalidQuestionException
     {
@@ -46,7 +47,7 @@ public class AnswerService {
             QuestionEntity questionEntity  = questionDao.getQuestionById(questionId);
             if(questionEntity == null)
             {
-                throw new AuthorizationFailedException("QUES-001","The question entered is invalid");
+                throw new InvalidQuestionException("QUES-001","The question entered is invalid");
             }
             else
                 answerEntity.setQuestion(questionEntity);
@@ -55,6 +56,7 @@ public class AnswerService {
         }
     }
 
+    //This method is used to update the answer for the question
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity updateAnswer(AnswerEntity answerEditedEntity,final String accessToken) throws AuthorizationFailedException, AnswerNotFoundException
     {
@@ -85,6 +87,7 @@ public class AnswerService {
         }
     }
 
+    //This method is used to delete the question
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity deleteAnswer(final  String answerId, final String accessToken) throws AuthorizationFailedException, AnswerNotFoundException
     {
@@ -115,6 +118,7 @@ public class AnswerService {
         }
     }
 
+    //This method is used to get all the answers by QuestionId
     public List<AnswerEntity> getAllAnswersByQuestionId(final String questionId, final String accessToken) throws AuthorizationFailedException, InvalidQuestionException
     {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
@@ -136,7 +140,12 @@ public class AnswerService {
             else
             {
                 List<AnswerEntity> answerEntityList =  answerDao.getAnswersToQuestionById(questionEntity);
-                return answerEntityList;
+                if(answerEntityList.isEmpty())
+                {
+                    throw new InvalidQuestionException("QUES-001","The question with entered uuid whose details are to be seen does not exist");
+                }
+                else
+                    return answerEntityList;
             }
         }
     }

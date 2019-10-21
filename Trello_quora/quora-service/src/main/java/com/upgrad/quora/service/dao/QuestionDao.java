@@ -95,6 +95,7 @@ public class QuestionDao {
         }
     }
 
+    //Method to get the question by userid and questionid
     public QuestionEntity getQuestionByUserIdAndQuestionId(final UserEntity userEntity,final String uuid)
     {
         try

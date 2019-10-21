@@ -19,7 +19,7 @@ public class UserAdminBusinessService {
     @Autowired
     PasswordCryptographyProvider passwordCryptographyProvider;
 
-
+    //This method is used to create new user details
     public UserEntity createUser(final UserEntity userEntity) throws SignUpRestrictedException
     {
         UserEntity objUserEntityName = userDao.getUserByName(userEntity.getUsername());
@@ -49,6 +49,7 @@ public class UserAdminBusinessService {
         }
     }
 
+    //This method is used to extract the user details
     public UserEntity getUser(final String userUuid, final String authorizationToken) throws AuthorizationFailedException,UserNotFoundException
     {
 
@@ -73,6 +74,7 @@ public class UserAdminBusinessService {
         return  userEntity;
     }
 
+    //This method is used to delete the user details
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity deleteUser(final String userUuid, final String authorizationToken) throws AuthorizationFailedException,UserNotFoundException
     {

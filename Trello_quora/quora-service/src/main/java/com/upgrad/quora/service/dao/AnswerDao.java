@@ -16,13 +16,14 @@ public class AnswerDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-
+    //Method used to create Answer
     public AnswerEntity createAnswer(AnswerEntity answerEntity)
     {
         entityManager.persist(answerEntity);
         return answerEntity;
     }
 
+    //Method to get Answer to question
     public AnswerEntity getAnswersToQuestion(final String questionId) {
         try {
             return entityManager.createNamedQuery("getByQuestionId", AnswerEntity.class).setParameter("question_id", questionId).getSingleResult();
@@ -33,6 +34,7 @@ public class AnswerDao {
         }
     }
 
+    //Method to get the Answer by UUID
     public AnswerEntity getAnswerById(final String uuid)
     {
         try
@@ -45,6 +47,7 @@ public class AnswerDao {
         }
     }
 
+    //Method to update the answer
     public AnswerEntity updateAnswer(final String content, final String uuid, final UserEntity userEntity)
     {
         try
@@ -62,6 +65,7 @@ public class AnswerDao {
         }
     }
 
+    //Method to get the Answer to Quetion by UserId
     public AnswerEntity getAnswerByUserIdAndQuestionId(final UserEntity userEntity,final String uuid)
     {
         try
@@ -74,6 +78,7 @@ public class AnswerDao {
         }
     }
 
+    //Method to delete the answer
     public AnswerEntity deleteAnswer(final String answerId)
     {
         try
@@ -92,6 +97,7 @@ public class AnswerDao {
         }
     }
 
+    //Method to get the Answers to questionBy ID
     public List<AnswerEntity> getAnswersToQuestionById(final QuestionEntity questionEntity) {
         try {
             List<AnswerEntity> result =  entityManager.createNamedQuery("getAllAnswerToQuestionId", AnswerEntity.class).setParameter("question",questionEntity).getResultList();
