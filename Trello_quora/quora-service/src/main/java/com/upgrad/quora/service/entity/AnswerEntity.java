@@ -15,36 +15,40 @@ import java.time.ZonedDateTime;
 @Table(name = "answer", schema = "public")
 @NamedQueries(
         {
-               // @NamedQuery(name = "getAnswer", query = "select a from answer a where a.uuid = :uuid"),
-               // @NamedQuery(name = "getByQuestionId", query = "select a from answer a where a.question =:question_id")
+                //@NamedQuery(name = "getAnswer", query = "select a from answer a where a.user = :user"),
+                //@NamedQuery(name = "getByQuestionId", query = "select a from answer a where a.question =:question")
+                @NamedQuery(name = "getAnswerById", query = "select a from AnswerEntity a where a.uuid =:uuid"),
+                @NamedQuery(name = "getAnswerByUserIdAndQuestionId", query = "select a from AnswerEntity a where a.user =:user AND a.uuid=:uuid")
         }
 )
 public class AnswerEntity implements Serializable {
 
+
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "UUID")
+    @Column(name = "uuid")
     @Size(max = 64)
     private String uuid;
 
-    @Column(name = "ANS")
+    @Column(name = "ans")
     @NotNull
-    @Size(max = 200)
-    private String answer;
+    @Size(max = 500)
+    private String ans;
 
-    @Column(name = "DATE")
-    private ZonedDateTime createdDate;
+    @Column(name = "date")
+    @NotNull
+    private ZonedDateTime date;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    //@ManyToOne
-    //@JoinColumn(name = "QUESTION_ID")
-    //private QuestionEntity question;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private QuestionEntity question;
 
     public Integer getId() {
         return id;
@@ -62,20 +66,20 @@ public class AnswerEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getAnswer() {
-        return answer;
+    public String getAns() {
+        return ans;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
+    public void setAns(String ans) {
+        this.ans = ans;
     }
 
-    public ZonedDateTime getCreatedDate() {
-        return createdDate;
+    public ZonedDateTime getDate() {
+        return date;
     }
 
-    public void setCreatedDate(ZonedDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
     }
 
     public UserEntity getUser() {
@@ -86,22 +90,22 @@ public class AnswerEntity implements Serializable {
         this.user = user;
     }
 
-    //public QuestionEntity getQuestion() {
-    //    return question;
-    //}
+    public QuestionEntity getQuestion() {
+        return question;
+    }
 
-    //public void setQuestion(QuestionEntity question) {
-    //    this.question = question;
-   // }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
+    public void setQuestion(QuestionEntity question) {
+        this.question = question;
     }
 
     @Override
     public boolean equals(Object obj) {
         return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
     }
 
     @Override
