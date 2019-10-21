@@ -82,10 +82,12 @@ public class UserAdminBusinessService {
         UserEntity userEntity = userDao.getUserByUserId(userUuid);
         if(userEntity == null)
         {
+            System.out.println("came");
             throw new UserNotFoundException("USR-001","User with entered uuid to be deleted does not exist");
         }
         else if(!userEntity.getRole().equals("admin"))
         {
+            System.out.println("came!!");
             throw new AuthorizationFailedException("ATHR-003","Unauthorized Access, Entered user is not admin");
         }
 

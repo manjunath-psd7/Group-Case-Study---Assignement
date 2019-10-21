@@ -1,5 +1,6 @@
 package com.upgrad.quora.api.controller;
 
+import com.upgrad.quora.api.model.ErrorResponse;
 import com.upgrad.quora.api.model.UserDetailsResponse;
 import com.upgrad.quora.service.business.UserAdminBusinessService;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -21,19 +22,27 @@ public class CommonController {
 
     //Enpoint for extracting userProfile
     @RequestMapping(method = RequestMethod.GET, path = "/userprofile/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<UserDetailsResponse> getUser(@PathVariable("userId") final String userUuid,
+    public ResponseEntity getUser(@PathVariable("userId") final String userUuid,
                                                        @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, UserNotFoundException
     {
-        final UserEntity userEntity = userAdminBusinessService.getUser(userUuid, authorization);
-        UserDetailsResponse userDetailsResponse = new UserDetailsResponse()
-                 .firstName(userEntity.getFirstName())
-                .lastName(userEntity.getLastName())
-                .userName(userEntity.getUsername())
-                .emailAddress(userEntity.getEmail())
-                .country(userEntity.getCountry())
-                .contactNumber(userEntity.getContactnumber())
-                .dob(userEntity.getDob())
-                .aboutMe(userEntity.getAboutme());
-        return new ResponseEntity<UserDetailsResponse>(userDetailsResponse, HttpStatus.OK);
+        try {
+            final UserEntity userEntity = userAdminBusinessService.getUser(userUuid, authorization);
+            UserDetailsResponse userDetailsResponse = new UserDetailsResponse()
+                    .firstName(userEntity.getFirstName())
+                    .lastName(userEntity.getLastName())
+                    .userName(userEntity.getUsername())
+                    .emailAddress(userEntity.getEmail())
+                    .country(userEntity.getCountry())
+                    .contactNumber(userEntity.getContactnumber())
+                    .dob(userEntity.getDob())
+                    .aboutMe(userEntity.getAboutme());
+            return new ResponseEntity<UserDetailsResponse>(userDetailsResponse, HttpStatus.OK);
+        } catch (AuthorizationFailedException e) {
+            ErrorResponse errorResponse = new ErrorResponse().code(e.getCode()).message(e.getErrorMessage());
+            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.FORBIDDEN);
+        } catch (UserNotFoundException e) {
+            ErrorResponse errorResponse = new ErrorResponse().code(e.getCode()).message(e.getErrorMessage());
+            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.NOT_FOUND);
+        }
     }
 }
