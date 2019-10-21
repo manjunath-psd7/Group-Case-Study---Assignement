@@ -1,16 +1,13 @@
 package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.QuestionEntity;
-import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.entity.UserEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public class QuestionDao {
@@ -34,7 +31,8 @@ public class QuestionDao {
      */
     public List<QuestionEntity> getAllQuestions() {
         try {
-            return entityManager.createQuery("SELECT * FROM QuestionEntity", QuestionEntity.class).getResultList();
+            List<QuestionEntity> result =  entityManager.createNamedQuery("allQuestions", QuestionEntity.class).getResultList();
+            return  result;
         }
         catch (NoResultException nre)
         {
@@ -64,9 +62,10 @@ public class QuestionDao {
      *
      * @return
      */
-    public List<QuestionEntity> getQuestionsByUserUUId(final String uuid) {
+    public List<QuestionEntity> getQuestionsByUserUUId(final UserEntity userEntity) {
         try {
-            return entityManager.createNamedQuery("questionByUserId", QuestionEntity.class).setParameter("user_id",uuid).getResultList();
+            List<QuestionEntity> result =  entityManager.createNamedQuery("getQuestionByUserId", QuestionEntity.class).setParameter("user",userEntity).getResultList();
+            return  result;
         }
         catch (NoResultException nre)
         {
@@ -77,21 +76,30 @@ public class QuestionDao {
     /***
      * This function is used for database interaction of updating a question
      *
-     * @param uuid: UUID of Question to be updated
-     * @param updatedContent: updated Question
      * @return
      */
-    public QuestionEntity updateQuestionContent(final String uuid, final String updatedContent)
+    public QuestionEntity updateQuestion(final String content, final String uuid, final UserEntity userEntity)
     {
         try
         {
-            QuestionEntity questionEntity = getQuestionById(uuid);
-            int num =  entityManager.createQuery("UPDATE QuestionEntity qt SET qt.question = updatedQuestion WHERE qt.uuid =:uuid").setParameter("uuid",uuid).setParameter("updatesQuestion", updatedContent).executeUpdate();
+            int num =  entityManager.createQuery("UPDATE QuestionEntity q SET q.content = :content WHERE q.uuid =:uuid").setParameter("content",content).setParameter("uuid",uuid).executeUpdate();
 
             if(num == 0)
                 throw null;
             else
-                return questionEntity;
+                return getQuestionByUserIdAndQuestionId(userEntity,uuid);
+        }
+        catch (NoResultException nre)
+        {
+            return null;
+        }
+    }
+
+    public QuestionEntity getQuestionByUserIdAndQuestionId(final UserEntity userEntity,final String uuid)
+    {
+        try
+        {
+            return entityManager.createNamedQuery("getQuestionByUserIdAndQuestionId",QuestionEntity.class).setParameter("user",userEntity).setParameter("uuid",uuid).getSingleResult();
         }
         catch (NoResultException nre)
         {

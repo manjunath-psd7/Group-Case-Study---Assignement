@@ -84,7 +84,7 @@ public class UserAdminBusinessService {
         }
         else if(!userEntity.getRole().equals("admin"))
         {
-            throw new UserNotFoundException("ATHR-003","Unauthorized Access, Entered user is not admin");
+            throw new AuthorizationFailedException("ATHR-003","Unauthorized Access, Entered user is not admin");
         }
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserHasSignedIn(userEntity);
