@@ -19,18 +19,10 @@ public class QuestionDao {
 
     /***
      * This function is used for database interaction of inserting a new question
-     *
-     * @param question: Question to be entered
-     * @param userAuthTokenEntity: For fetching user Details
      * @return
      */
-    public QuestionEntity createQuestion(String question, UserAuthTokenEntity userAuthTokenEntity)
+    public QuestionEntity createQuestion(QuestionEntity questionEntity)
     {
-        final QuestionEntity questionEntity = new QuestionEntity();
-        questionEntity.setUuid(UUID.randomUUID().toString());
-        questionEntity.setUser(userAuthTokenEntity.getUser());
-        questionEntity.setQuestion(question);
-        questionEntity.setCreatedDate(ZonedDateTime.now(ZoneId.systemDefault()));
         entityManager.persist(questionEntity);
         return questionEntity;
     }
@@ -58,7 +50,7 @@ public class QuestionDao {
      */
     public QuestionEntity getQuestionById(final String uuid) {
         try {
-            return entityManager.createNamedQuery("questionById", QuestionEntity.class).setParameter("uuid",uuid).getSingleResult();
+            return entityManager.createNamedQuery("getQuestionById", QuestionEntity.class).setParameter("uuid",uuid).getSingleResult();
         }
         catch (NoResultException nre)
         {

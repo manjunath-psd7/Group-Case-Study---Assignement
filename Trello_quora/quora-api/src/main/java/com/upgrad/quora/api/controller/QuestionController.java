@@ -15,7 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
@@ -28,15 +30,15 @@ public class QuestionController {
     UserDao userDao;
 
     @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity createQuestion(final QuestionRequest questionrequest, @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException {
-        try{
-            QuestionEntity respquestionEntity = questionService.createQuestion(questionrequest.getContent(), accessToken);
-            QuestionResponse questionResponse = new QuestionResponse().id(respquestionEntity.getUuid()).status("QUESTION CREATED");
-            return new ResponseEntity<QuestionResponse>(questionResponse, HttpStatus.CREATED);
-        }catch(AuthorizationFailedException e){
-            JSONObject respObj = new JSONObject();
-            return new ResponseEntity<>(respObj.appendField("code", e.getCode()), HttpStatus.FORBIDDEN);
-        }
+    public ResponseEntity createQuestion(final QuestionRequest questionRequest, @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException {
+        final QuestionEntity questionEntity = new QuestionEntity();
+        questionEntity.setUuid(UUID.randomUUID().toString());
+        questionEntity.setContent(questionRequest.getContent());
+        questionEntity.setDate(ZonedDateTime.now());
+
+        final QuestionEntity createdQuestionEntity = questionService.createQuestion(questionEntity,accessToken);
+        QuestionResponse question = new QuestionResponse().id(createdQuestionEntity.getUuid()).status("QUESTION CREATED");
+        return new ResponseEntity<QuestionResponse>(question, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -48,7 +50,7 @@ public class QuestionController {
             for (QuestionEntity questionEntity : RespQuestionsList) {
                 JSONObject jo=new JSONObject();
                 jo.put("uuid", questionEntity.getUuid());
-                jo.put("content", questionEntity.getQuestion());
+                jo.put("content", questionEntity.getContent());
                 respArray.appendElement(jo);
             }
 
@@ -71,7 +73,7 @@ public class QuestionController {
             for (QuestionEntity questionEntity : RespQuestionsList) {
                 JSONObject jo=new JSONObject();
                 jo.put("uuid", questionEntity.getUuid());
-                jo.put("content", questionEntity.getQuestion());
+                jo.put("content", questionEntity.getContent());
                 respArray.appendElement(jo);
             }
 

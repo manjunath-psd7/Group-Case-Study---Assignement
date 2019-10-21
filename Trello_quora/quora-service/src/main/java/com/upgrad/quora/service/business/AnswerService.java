@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class AnswerService {
 
@@ -109,6 +111,32 @@ public class AnswerService {
             else
             {
                 return answerDao.deleteAnswer(answerId);
+            }
+        }
+    }
+
+    public List<AnswerEntity> getAllAnswersByQuestionId(final String questionId, final String accessToken) throws AuthorizationFailedException, InvalidQuestionException
+    {
+        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
+        if(userAuthTokenEntity == null)
+        {
+            throw new AuthorizationFailedException("ATHR-001","User has not signed in");
+        }
+        else if(userAuthTokenEntity.getLogoutAt()  != null)
+        {
+            throw new AuthorizationFailedException("ATHR-002","User is signed out. Sign in first to get the answers");
+        }
+        else
+        {
+            QuestionEntity questionEntity = questionDao.getQuestionById(questionId);
+            if(questionEntity == null)
+            {
+                throw new InvalidQuestionException("QUES-001","The question with entered uuid whose details are to be seen does not exist");
+            }
+            else
+            {
+                List<AnswerEntity> answerEntityList =  answerDao.getAnswersToQuestionById(questionEntity);
+                return answerEntityList;
             }
         }
     }

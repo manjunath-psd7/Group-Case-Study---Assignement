@@ -24,19 +24,22 @@ public class QuestionService {
     private UserDao userDao;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity createQuestion(String question, final String authorizationToken) throws AuthorizationFailedException {
-
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
-        if(userAuthTokenEntity == null) {
-            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+    public QuestionEntity createQuestion(final QuestionEntity questionEntity, final String accessToken) throws AuthorizationFailedException
+    {
+        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
+        if(userAuthTokenEntity == null)
+        {
+            throw new AuthorizationFailedException("ATHR-001","User has not signed in");
         }
-        UserAuthTokenEntity getUserSignedIn = userDao.getUserHasSignedIn(userAuthTokenEntity.getUser());
-        if(getUserSignedIn == null) {
-            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to post a question");
+        else if(userAuthTokenEntity.getLogoutAt()  != null)
+        {
+            throw new AuthorizationFailedException("ATHR-002","User is signed out. Sign in first to post a question");
         }
-
-        QuestionEntity newquestion = questionDao.createQuestion(question, getUserSignedIn);
-        return newquestion;
+        else
+        {
+            questionEntity.setUser(userDao.getUserByAccessToken(accessToken));
+            return questionDao.createQuestion(questionEntity);
+        }
     }
 
     public List<QuestionEntity> getAllQuestions(final String authorizationToken) throws AuthorizationFailedException {

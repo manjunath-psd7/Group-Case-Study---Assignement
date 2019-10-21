@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -52,5 +54,20 @@ public class AnswerController {
         final AnswerEntity answerEntity = answerService.deleteAnswer(answerId, authorization);
         AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse().id(answerEntity.getUuid()).status("ANSWER DELETED");
         return new ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/answer/all/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<AnswerDetailsResponse>> getAllAnswersToQuestion(@PathVariable("questionId") final String questionId, @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
+        final List<AnswerEntity> answerDetailsResponses = answerService.getAllAnswersByQuestionId(questionId,accessToken);
+        List<AnswerDetailsResponse> answerDetailsResponseList = new ArrayList<>();
+        for (AnswerEntity a:answerDetailsResponses) {
+            answerDetailsResponseList.add(new AnswerDetailsResponse()
+                    .answerContent(a.getAns())
+                    .questionContent(a.getQuestion().getContent())
+                    .id(a.getUuid()));
+        }
+        return new ResponseEntity<List<AnswerDetailsResponse>>(answerDetailsResponseList, HttpStatus.OK);
+
+
     }
 }

@@ -1,39 +1,47 @@
 package com.upgrad.quora.service.entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "QUESTION", schema = "public")
+@Table(name = "question", schema = "public")
 @NamedQueries(
         {
-                @NamedQuery(name = "questionById", query = "select q from QuestionEntity q where q.uuid = :uuid"),
-                @NamedQuery(name = "questionByUserId", query = "select q from QuestionEntity q where q.user.uuid = :user_id")
-        }
-)
-public class QuestionEntity implements Serializable {
+                @NamedQuery(name = "allQuestions", query = "select q from QuestionEntity q"),
+                @NamedQuery(name = "getQuestionById", query = "select q from QuestionEntity q where q.uuid =:uuid"),
+                @NamedQuery(name = "getQuestionByUserId", query = "select q from QuestionEntity q where q.user.uuid =:user_id"),
+                @NamedQuery(name = "getQuestionByUserIdAndQuestionId", query = "select q from QuestionEntity q where q.user =:user AND q.uuid=:uuid")
+        })
+
+public class QuestionEntity {
+
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "UUID")
-    @Size(max = 200)
+    @Column(name = "uuid")
+    @Size(max = 64)
     private String uuid;
 
-    @Column(name = "QUESTION")
+    @Column(name = "content")
     @NotNull
-    @Size(max = 200)
-    private String question;
+    @Size(max = 500)
+    private String content;
 
-    @Column(name = "DATE")
-    private ZonedDateTime createdDate;
+    @Column(name = "date")
+    @NotNull
+    private ZonedDateTime date;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
 
     public Integer getId() {
@@ -52,20 +60,20 @@ public class QuestionEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getQuestion() {
-        return question;
+    public String getContent() {
+        return content;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public ZonedDateTime getCreatedDate() {
-        return createdDate;
+    public ZonedDateTime getDate() {
+        return date;
     }
 
-    public void setCreatedDate(ZonedDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
     }
 
     public UserEntity getUser() {
@@ -74,5 +82,20 @@ public class QuestionEntity implements Serializable {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return new EqualsBuilder().append(this, obj).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(this).hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

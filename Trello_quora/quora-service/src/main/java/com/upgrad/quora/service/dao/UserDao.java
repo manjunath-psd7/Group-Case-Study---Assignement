@@ -131,5 +131,30 @@ public class UserDao {
         }
     }
 
+    //Based on AccessToken get the relvant UserId
+    public UserEntity getUserByAccessToken(final String accessToken){
+        try {
+            UserAuthTokenEntity userAuthTokenEntity =  entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
+            if(userAuthTokenEntity == null)
+            {
+                throw  null;
+            }
+            else
+            {
+                int id = userAuthTokenEntity.getUser().getId();
+                UserEntity userEntity = entityManager.createNamedQuery("userById", UserEntity.class).setParameter("id", id).getSingleResult();
+                if(userEntity == null)
+                    throw  null;
+                else
+                    return userEntity;
+            }
+
+        }
+        catch (NoResultException nre)
+        {
+            return null;
+        }
+    }
+
 
 }
