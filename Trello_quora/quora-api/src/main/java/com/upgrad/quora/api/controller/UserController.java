@@ -29,7 +29,6 @@ public class UserController {
     //Endpoint for user Signup
     @RequestMapping(method = RequestMethod.POST, path = "/user/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity signup(final SignupUserRequest signupUserRequest) throws SignUpRestrictedException {
-        try {
             final UserEntity userEntity = new UserEntity();
             userEntity.setUuid(UUID.randomUUID().toString());
             userEntity.setFirstName(signupUserRequest.getFirstName());
@@ -47,17 +46,13 @@ public class UserController {
             final UserEntity createdUserEntity = signupBusinessService.signup(userEntity);
             SignupUserResponse userResponse = new SignupUserResponse().id(createdUserEntity.getUuid()).status("USER SUCCESSFULLY REGISTERED");
             return new ResponseEntity<SignupUserResponse>(userResponse, HttpStatus.CREATED);
-        } catch (SignUpRestrictedException e) {
-            ErrorResponse errorResponse = new ErrorResponse().code(e.getCode()).message(e.getErrorMessage());
-            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.CONFLICT);
-        }
     }
 
     //Endpoint for user Signin
     @RequestMapping(method = RequestMethod.POST, path = "/user/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity login(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
 
-        try {
+
             String s = authorization.split("Basic ")[1];
             byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
             String decodedText = new String(decode);
@@ -71,26 +66,20 @@ public class UserController {
             HttpHeaders headers = new HttpHeaders();
             headers.add("access-token", userAuthToken.getAccessToken());
             return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK);
-        } catch (AuthenticationFailedException e) {
-            ErrorResponse errorResponse = new ErrorResponse().code(e.getCode()).message(e.getErrorMessage());
-            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.UNAUTHORIZED);
-        }
+
     }
 
     //Endpoint for user Signout
-    @RequestMapping(method = RequestMethod.POST, path = "/users/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.POST, path = "/user/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity logout(@RequestHeader("authorization") final String accessToken) throws SignOutRestrictedException {
 
-        try {
+
             UserAuthTokenEntity userAuthToken = signinBusinessService.singOutUser(accessToken);
 
             SignoutResponse signoutResponse = new SignoutResponse().id(userAuthToken.getUser().getUuid()).message("SIGNED OUT SUCCESSFULLY");
             HttpHeaders headers = new HttpHeaders();
             headers.add("access-token", userAuthToken.getAccessToken());
             return new ResponseEntity<SignoutResponse>(signoutResponse, headers, HttpStatus.OK);
-        } catch (SignOutRestrictedException e) {
-            ErrorResponse errorResponse = new ErrorResponse().code(e.getCode()).message(e.getErrorMessage());
-            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.UNAUTHORIZED);
-        }
+
     }
 }

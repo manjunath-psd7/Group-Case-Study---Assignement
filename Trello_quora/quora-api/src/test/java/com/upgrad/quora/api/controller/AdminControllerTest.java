@@ -26,7 +26,7 @@ public class AdminControllerTest {
     //This test case passes when you try to delete the user but the JWT token entered does not exist in the database.
     @Test
     public void deleteWithNonExistingAccessToken() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.delete("/admin/user/database_uuid4").header("authorization", "non_existing_access_token"))
+        mvc.perform(MockMvcRequestBuilders.delete("/admin/user/database_uuid3").header("authorization", "non_existing_access_token"))
                 .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("ATHR-001"));
     }

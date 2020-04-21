@@ -3,6 +3,7 @@ package com.upgrad.quora.service.business;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
+import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
@@ -76,24 +77,22 @@ public class UserAdminBusinessService {
 
     //This method is used to delete the user details
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserEntity deleteUser(final String userUuid, final String authorizationToken) throws AuthorizationFailedException,UserNotFoundException
-    {
+    public UserEntity deleteUser(final String userUuid, final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException, AuthenticationFailedException {
 
         UserEntity userEntity = userDao.getUserByUserId(userUuid);
         if(userEntity == null)
         {
-            System.out.println("came");
             throw new UserNotFoundException("USR-001","User with entered uuid to be deleted does not exist");
         }
         else if(!userEntity.getRole().equals("admin"))
         {
-            System.out.println("came!!");
-            throw new AuthorizationFailedException("ATHR-003","Unauthorized Access, Entered user is not admin");
+            throw new AuthenticationFailedException("ATHR-003","Unauthorized Access, Entered user is not admin");
         }
 
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserHasSignedIn(userEntity);
         if(userAuthTokenEntity == null)
         {
+
             throw new AuthorizationFailedException("ATHR-001","User has not signed in");
         }
 

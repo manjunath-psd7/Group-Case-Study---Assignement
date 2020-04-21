@@ -7,6 +7,7 @@ import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AnswerNotFoundException;
+import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +90,7 @@ public class AnswerService {
 
     //This method is used to delete the question
     @Transactional(propagation = Propagation.REQUIRED)
-    public AnswerEntity deleteAnswer(final  String answerId, final String accessToken) throws AuthorizationFailedException, AnswerNotFoundException
-    {
+    public AnswerEntity deleteAnswer(final  String answerId, final String accessToken) throws AuthorizationFailedException, AnswerNotFoundException, AuthenticationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
         if(userAuthTokenEntity == null)
         {
@@ -98,7 +98,7 @@ public class AnswerService {
         }
         else if(userAuthTokenEntity.getLogoutAt()  != null)
         {
-            throw new AuthorizationFailedException("ATHR-002","User is signed out. Sign in first to delete an answer");
+            throw new AuthenticationFailedException("ATHR-002","User is signed out. Sign in first to delete an answer");
         }
         else
         {
